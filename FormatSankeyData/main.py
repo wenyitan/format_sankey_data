@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import json
 from fastapi.middleware.cors import CORSMiddleware
 
+""" to start backend, run uvicorn main:app --reload """
 app = FastAPI()
 
 origins = [
@@ -25,6 +26,16 @@ async def get_sankey_data():
     data = json.load(open("data.txt", "r"))
     return data
 
+"""
+Internally called function, not exposed. Called by other endpoints as a starting point
+Counts the number of each occurence and grouped them under each type 
+Returns a json object/dictionary with 3 keys:
+- project: str - project as specified in the input data (not required by recharts' API)
+- allCounts: list/json array of dictionaries/json object with keys:
+    - type: str - type according to input data
+    - counts: list/json array of {"code":"exampleCode", "count": 3} unique list of code and the number of occurences in input data
+- totalCount: int - total number of instances picked up
+"""
 def count_data():
     data = json.load(open("data.txt", "r"))
     project = data["project"]
@@ -42,9 +53,20 @@ def count_data():
         result.append({"type": type, "counts" : code_count, "typeCount":count})
     return {"project":project, "allCounts":result, "totalCount": total_count}
 
+
+"""
+Endpoint: http://localhost:8000/get-nodes
+returns a dictionary/json object with 3 keys according to https://recharts.org/en-US/api/SankeyChart 's data format
+- project: str - project as specified in the input data (not required by recharts' API)
+- nodes - list/json array of dictionaries/json objects with 1 key {"name":"example"}
+- links - list/json array of dictionaries/json objects with 3 keys: source, target, value, and values as integers corresponding to the index of the source and targets in the nodes array
+- secondary: json object with type from data as keys and values are same as primary
+#
+"""
 @app.get("/get-nodes")
 async def generate_nodes():
     data = count_data()
+    print(data)
     nodes = []
     links = []
     project = data["project"]
@@ -78,7 +100,18 @@ async def generate_nodes():
             }
             nodes.append(node_obj)
     return {"project": project, "nodes": nodes, "links": links}
-    
+
+
+"""
+Endpoint: http://localhost:8000/get-separated-nodes
+returns a dictionary/json object with 3 keys:
+- project: str - project as specified in the input data
+- primary: dictionary/json with 2 keys: formatted according to https://recharts.org/en-US/api/SankeyChart 's data format
+   1) nodes - list/json array of dictionaries/json objects with 1 key {"name":"example"}
+   2) links - list/json array of dictionaries/json objects with 3 keys: source, target, value, and values as integers corresponding to the index of the source and targets in the nodes array
+- secondary: json object with type from data as keys and values are same as primary
+#
+"""
 @app.get("/get-separated-nodes")
 async def generate_separated_nodes():
     data = count_data()
@@ -129,19 +162,24 @@ class Node:
         self.data = {"label": name}
         self.type = type
         self.position = {"x": x, "y": y}
-        # if type == "input":
-            # self.sourcePosition = "right"
-        # if type == "default":
         self.sourcePosition = "right"
         self.targetPosition = "left"
-        # if type == "output"
 
 class Edge:
-    def __init__(self, id, source, target) -> None:
+    def __init__(self, id, source, target):
         self.id = str(id)
         self.source = str(source)
         self.target = str(target)
 
+"""
+Endpoint: http://localhost:8000/get-flow
+returns a dictionary/json object with 3 keys:
+- project: str - project as specified in the input data
+- nodes - list/json array of Node objects defined above
+- edges - list/json array of Edge objects defined above
+- secondary: json object with type from data as keys and values are same as primary
+#
+"""
 @app.get("/get-flow")
 async def generate_flow():
     origin_x = 0

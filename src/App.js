@@ -2,6 +2,7 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import axios from "axios";
 import Flow from './components/Flow';
+import { Sankey, Tooltip } from 'recharts';
 
 function App() {
   const [ data, setData ] = useState();
@@ -37,7 +38,7 @@ function App() {
   }
 
   useEffect(()=> {
-    // getData();
+    getData();
     getFlowData();
   }, [])
 
@@ -72,7 +73,7 @@ function App() {
 
   return (
     <div className="App" style={{ height: 800, width: 800 }}>
-      {/* {data && 
+      {data && 
         <Sankey
           width={1000}
           height={1000}
@@ -91,7 +92,7 @@ function App() {
         >
           <Tooltip />
         </Sankey>}
-        <button onClick={handleRevert}>Revert</button> */}
+        <button onClick={handleRevert}>Revert</button>
         {edges.length > 0 && nodes.length > 0 && <Flow nodes={nodes} edges={edges}/>}
     </div>
   );

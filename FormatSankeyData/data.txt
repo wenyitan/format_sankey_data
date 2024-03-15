@@ -1,0 +1,62 @@
+{
+    "project":"fruit",
+    "type_and_imp_list":[
+        {
+            "type": "apple",
+            "codeImplList": [
+                {
+                    "code": "apple salad"
+                },
+                {
+                    "code": "apple strudel"
+                },
+                {
+                    "code": "apple strudel"
+                },
+                {
+                    "code": "apple strudel"
+                },
+                {
+                    "code": "apple pie"
+                },
+                {
+                    "code": "apple pen"
+                }
+            ]
+        },
+        {
+            "type": "orange",
+            "codeImplList": [
+                {
+                    "code": "orange juice"
+                },
+                {
+                    "code": "orange chicken"
+                },
+                {
+                    "code": "orange pulp"
+                },
+                {
+                    "code": "minute made"
+                }
+            ]
+        },
+        {
+            "type": "banana",
+            "codeImplList": [
+                {
+                    "code": "banana cake"
+                },
+                {
+                    "code": "smoothie"
+                }, 
+                {
+                    "code": "banana boat"
+                },
+                {
+                    "code": "banana boat"
+                }
+            ]
+        }
+    ]
+}
